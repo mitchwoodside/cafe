@@ -10,7 +10,7 @@ def cli():
 @cli.command()
 @click.option("-l", "--list", "options_file", default="list.csv")
 @click.option("-b", "--banned", "banned_matches_file", default="banned.csv")
-def spin(options_file, banned_file):
+def spin(options_file, banned_matches_file):
     names = []
     banned_matches = []
     matches = []
@@ -20,7 +20,7 @@ def spin(options_file, banned_file):
         for row in reader:
             names.append(row[0])
 
-    with open(banned_file, newline="") as banned_csv:
+    with open(banned_matches_file, newline="") as banned_csv:
         reader = csv.reader(banned_csv)
         for row in reader:
             banned_matches.append(row)
