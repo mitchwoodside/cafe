@@ -25,12 +25,12 @@ def spin(options_file, banned_matches_file, update):
     with open(options_file, newline="") as options_csv:
         reader = csv.reader(options_csv)
         for row in reader:
-            names.append(row[0])
+            names.append(row[0].strip())
 
     with open(banned_matches_file, mode="r+", newline="") as banned_csv:
         reader = csv.reader(banned_csv)
         for row in reader:
-            banned_matches.add(frozenset(row))
+            banned_matches.add(frozenset(map(lambda x: x.strip(), row)))
         banned_csv.seek(0)
         if not banned_csv.read()[-1] == "\n":
             banned_csv.write("\n")
