@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "coffee-roulette"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["Mitch Woodside <mitchmanwoodside@gmail.com>"]
 readme = "README.md"
