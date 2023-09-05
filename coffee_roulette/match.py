@@ -37,6 +37,8 @@ def ban_self_matches(names, banned_matches):
 
 
 def get_matches(names, banned_matches):
+    unmatched_player = None
+
     if not len(names) == len(set(names)):
         raise Exception("not all players are unique")
 
