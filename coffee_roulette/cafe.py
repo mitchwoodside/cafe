@@ -1,18 +1,19 @@
-import random
 import csv
-import math
 
 import click
 
 from coffee_roulette.match import get_matches
 
+
 def split_list(a):
-    half = len(a)//2
+    half = len(a) // 2
     return a[:half], a[half:]
+
 
 @click.group()
 def cli():
     pass
+
 
 @cli.command()
 @click.option("-l", "--list", "options_file", default="list.csv")
@@ -42,7 +43,7 @@ def spin(options_file, banned_matches_file, update):
 
     for match in matches:
         match = tuple(match)
-        click.echo("{}\t<-->\t{}".format(match[0],match[1]))
+        click.echo("{}\t<-->\t{}".format(match[0], match[1]))
 
     if unmatched_player:
         click.echo("{} went unmatched".format(unmatched_player))
@@ -51,6 +52,7 @@ def spin(options_file, banned_matches_file, update):
         with open(banned_matches_file, "a", newline="") as banned_csv:
             writer = csv.writer(banned_csv)
             writer.writerows(matches)
+
 
 if __name__ == "__main__":
     cli()
