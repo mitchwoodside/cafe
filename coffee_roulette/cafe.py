@@ -5,11 +5,6 @@ import click
 from coffee_roulette.match import get_matches
 
 
-def split_list(a):
-    half = len(a) // 2
-    return a[:half], a[half:]
-
-
 @click.group()
 def cli():
     pass

@@ -1,23 +1,21 @@
-import math
 import random
 from itertools import combinations
 
 import click
 
 
-def split_list(a):
-    half = len(a) // 2
-    return a[:half], a[half:]
-
-
-def match_players(names, available_matches):
-    random.shuffle(names)
-    random.shuffle(available_matches)
-    matches = []
+def match_players(names_orig, available_matches_orig):
+    def reshuffle():
+        random.shuffle(names_orig)
+        random.shuffle(available_matches_orig)
+        return list(names_orig), list(available_matches_orig), []
 
     def valid_match(potential_match, potential_name):
         other = next(n for n in potential_match if not n == potential_name)
         return name in potential_match and other in names
+
+    names, available_matches, matches = reshuffle()
+    attempts = 0
 
     while names:
         name = names.pop()
@@ -29,32 +27,13 @@ def match_players(names, available_matches):
                 names.remove(player)
 
         except StopIteration:
-            raise Exception("Cannot match all players")
+            attempts += 1
+            click.echo('-----+++++##### RESHUFFLING #####+++++-----')
+            if attempts > 100:
+                raise Exception("Cannot match all players")
+            names, available_matches, matches = reshuffle()
 
     return matches
-
-
-def remove_exhausted_players(names, banned_matches):
-    matches_exhausted = []
-    for name in names:
-        names_banned_matches = [i for i in banned_matches if name in i]
-        banned_match_count = len(names_banned_matches)
-        if banned_match_count >= len(names) - 1:
-            matches_exhausted.append(name)
-
-    for name in matches_exhausted:
-        names.remove(name)
-
-    return matches_exhausted
-
-
-def all_matches_banned(names, banned_matches):
-    return len(banned_matches) >= math.comb(len(names), 2)
-
-
-def ban_self_matches(names, banned_matches):
-    for name in names:
-        banned_matches.add(frozenset((name, name)))
 
 
 def get_matches(names, banned_matches):
