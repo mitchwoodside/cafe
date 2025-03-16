@@ -26,7 +26,7 @@ def spin(options_file, banned_matches_file, update):
     with open(banned_matches_file, mode="r+", newline="") as banned_csv:
         reader = csv.reader(banned_csv)
         for row in reader:
-            banned_matches.add(frozenset(map(lambda x: x.strip(), row)))
+            banned_matches.add(frozenset((x.strip() for x in row)))
         banned_csv.seek(0)
         if not banned_csv.read()[-1] == "\n":
             banned_csv.write("\n")
@@ -38,7 +38,7 @@ def spin(options_file, banned_matches_file, update):
 
     for match in matches:
         match = tuple(match)
-        click.echo("{}\t<-->\t{}".format(match[0], match[1]))
+        click.echo("{}\t<->\t{}".format(match[0], match[1]))
 
     if unmatched_player:
         click.echo("{} went unmatched".format(unmatched_player))

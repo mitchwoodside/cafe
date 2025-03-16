@@ -4,10 +4,25 @@ from itertools import combinations
 import click
 
 
+def is_odd(n):
+    return n % 2
+
+
+def remove_exhausted_players(players, available_matches):
+    exhausted_players = []
+
+    for name in players:
+        if not any(name in s for s in available_matches):
+            exhausted_players.append(name)
+            players.remove(name)
+
+    return exhausted_players
+
+
 def match_players(names_orig, available_matches_orig):
     def reshuffle():
         random.shuffle(names_orig)
-        random.shuffle(available_matches_orig)
+        random.shuffle(list(available_matches_orig))
         return list(names_orig), list(available_matches_orig), []
 
     def valid_match(potential_match, potential_name):
@@ -43,12 +58,7 @@ def get_matches(names, banned_matches):
     if not len(names) == len(set(names)):
         raise Exception("not all players are unique")
 
-    available_matches = [frozenset(a) for a in combinations(names, 2)]
-    for banned_match in banned_matches:
-        try:
-            available_matches.remove(banned_match)
-        except ValueError:
-            click.echo(f'impossible match banned: {banned_match}')
+    available_matches = {frozenset(a) for a in combinations(names, 2)} - banned_matches
 
     for name in names:
         if not any(name in s for s in available_matches):
@@ -58,10 +68,9 @@ def get_matches(names, banned_matches):
     if not available_matches:
         raise Exception("All matches are banned")
 
-    if not len(names) == 2 * (len(names) // 2):
+    if is_odd(len(names)):
         unmatched_player = random.choice(names)
-        for player_match in (m for m in available_matches if unmatched_player in m):
-            available_matches.remove(player_match)
+        available_matches -= {m for m in available_matches if unmatched_player in m}
         names.remove(unmatched_player)
 
     matches = match_players(names, available_matches)
