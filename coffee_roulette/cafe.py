@@ -31,7 +31,7 @@ def spin(options_file, banned_matches_file, update):
         if not banned_csv.read()[-1] == "\n":
             banned_csv.write("\n")
 
-    matches, unmatched_player, exhausted_players = get_matches(names, banned_matches)
+    matches, unmatched_player, exhausted_players = get_matches(set(names), banned_matches)
 
     for name in exhausted_players:
         click.echo("no matches available for {}".format(name))

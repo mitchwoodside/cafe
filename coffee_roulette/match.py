@@ -8,13 +8,12 @@ def is_odd(n):
     return n % 2
 
 
-def remove_exhausted_players(players, available_matches):
-    exhausted_players = []
+def get_exhausted_players(players, available_matches):
+    exhausted_players = set()
 
     for name in players:
         if not any(name in s for s in available_matches):
-            exhausted_players.append(name)
-            players.remove(name)
+            exhausted_players.add(name)
 
     return exhausted_players
 
@@ -22,7 +21,7 @@ def remove_exhausted_players(players, available_matches):
 def match_players(names_orig, available_matches_orig):
     def reshuffle():
         random.shuffle(names_orig)
-        random.shuffle(list(available_matches_orig))
+        random.shuffle(available_matches_orig)
         return list(names_orig), list(available_matches_orig), []
 
     def valid_match(potential_match, potential_name):
@@ -53,17 +52,14 @@ def match_players(names_orig, available_matches_orig):
 
 def get_matches(names, banned_matches):
     unmatched_player = None
-    exhausted_players = []
 
     if not len(names) == len(set(names)):
         raise Exception("not all players are unique")
 
     available_matches = {frozenset(a) for a in combinations(names, 2)} - banned_matches
 
-    for name in names:
-        if not any(name in s for s in available_matches):
-            exhausted_players.append(name)
-            names.remove(name)
+    exhausted_players = get_exhausted_players(names, available_matches)
+    names = list(names - exhausted_players)
 
     if not available_matches:
         raise Exception("All matches are banned")
@@ -73,6 +69,6 @@ def get_matches(names, banned_matches):
         available_matches -= {m for m in available_matches if unmatched_player in m}
         names.remove(unmatched_player)
 
-    matches = match_players(names, available_matches)
+    matches = match_players(names, list(available_matches))
 
     return matches, unmatched_player, exhausted_players
